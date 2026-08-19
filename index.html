@@ -1092,6 +1092,20 @@ footer {
 
 <div class="app">
 
+<!-- ===== SONG EDITOR ===== -->
+<div id="song-editor" class="hidden" style="background:#f4ecdb;color:#2a1810;padding:20px;border-radius:8px;margin-bottom:20px;">
+<h2 style="margin-bottom:10px;">Créer une nouvelle analyse</h2>
+<p>Entrez le titre, l'interprète et les paroles (une ligne = un vers).</p>
+<input id="songTitle" placeholder="Titre de la chanson" style="width:100%;padding:8px;margin:6px 0;">
+<input id="songArtist" placeholder="Interprète / Auteur" style="width:100%;padding:8px;margin:6px 0;">
+<textarea id="songLyrics" rows="12" placeholder="Collez ici les paroles..." style="width:100%;padding:8px;margin:6px 0;"></textarea>
+<div style="display:flex;gap:10px;">
+<button onclick="buildCustomSong()">Générer l'analyse</button>
+<button onclick="closeEditor()">Annuler</button>
+</div>
+</div>
+
+
 <!-- ====================== MENU ====================== -->
 <div id="screen-menu">
   <div class="header">
@@ -1131,6 +1145,8 @@ footer {
       <div class="enter">להיכנס לניתוח</div>
     </div>
   </div>
+
+  <div style="text-align:center;margin-bottom:16px;"><button class="compare-btn" onclick="openEditor()">➕ Nouvelle chanson</button></div>
 
   <div class="menu-compare">
     <button class="compare-btn" onclick="openVersion('comp')">⟡ Comparaison des deux versions ⟡</button>
@@ -2437,6 +2453,34 @@ function renderIndexBoth() {
 
 // Init
 goHome();
+
+function openEditor(){
+ document.getElementById('screen-menu').classList.add('hidden');
+ document.getElementById('screen-version').classList.add('hidden');
+ document.getElementById('song-editor').classList.remove('hidden');
+}
+function closeEditor(){
+ document.getElementById('song-editor').classList.add('hidden');
+ document.getElementById('screen-menu').classList.remove('hidden');
+}
+function buildCustomSong(){
+ const title=document.getElementById('songTitle').value||'Sans titre';
+ const artist=document.getElementById('songArtist').value||'Interprète inconnu';
+ const lines=document.getElementById('songLyrics').value.split(/\n+/).filter(x=>x.trim());
+ const html=`<div class="section-title">${title}</div>
+ <p><b>Interprète :</b> ${artist}</p>
+ <div class="analysis-intro">Chaque ligne est automatiquement numérotée pour permettre une analyse syntaxique, lexicale et morphologique vers par vers.</div>
+ <div class="poem-block">`+
+ lines.map((l,i)=>`<div class="poem-line"><span class="lnum">${i+1}</span><span class="text">${l}</span></div>`).join('')+
+ `</div><div class="section-title">Grille d'analyse syntaxique</div>`+
+ lines.map((l,i)=>`<div class="verse-section"><div class="verse-header"><span class="vnum">Vers ${i+1}</span></div><div class="verse-text">${l}</div><div class="verse-structure"><b>À compléter :</b> Sujet · Verbe · COD · COI · Compléments · Figures de style</div></div>`).join('');
+ document.getElementById('song-editor').classList.add('hidden');
+ document.getElementById('screen-version').classList.remove('hidden');
+ document.getElementById('lang-pill').textContent='PERSONNALISÉ';
+ document.getElementById('tabs').innerHTML='<button class="tab active">Analyse</button>';
+ document.getElementById('tab-content').innerHTML=html;
+}
+
 </script>
 </body>
 </html>
